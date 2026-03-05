@@ -245,6 +245,10 @@
 </head>
 <body>
 
+<audio id="speech">
+        <source src="https://nashwebdev.github.io/AR-test/speech.mp3" type="audio/mpeg">
+    </audio>
+
 <div id="scene-container">
 
      <a-scene
@@ -456,6 +460,28 @@ gltfLoader.load(
     ringNumber.style.color = '#ff4466';
   }
 );
+
+
+
+const sceneA = document.querySelector('a-entity');
+     var speech = document.getElementById('speech');
+
+sceneA.addEventListener("targetFound", () => {
+         speech.play()
+        texts.style.display = "none";
+
+        setTimeout(() => {
+            document.addEventListener("click", () => {
+            window.location.href = "https://bereagroup.co.za"
+            // btn.style.display = "flex";
+        });
+        }, 3000);
+    });
+
+    sceneA.addEventListener('targetLost' ,() =>{
+       speech.pause()
+      texts.style.display = "block";
+    })
 
 // ── Resize ───────────────────────────────────────────────
 window.addEventListener('resize', () => {
