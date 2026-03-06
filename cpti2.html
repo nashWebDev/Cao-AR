@@ -993,6 +993,7 @@ async function submitToWebhook(formData) {
     email: formData.email,
     cell: formData.cell,
     school: formData.school,
+    faculty:matchedFacultiesString,
     // Quiz results
     matched_faculties: matchedFacultiesString,
     matched_faculties_count: quizWinners.length,
@@ -1185,4 +1186,5 @@ window.addEventListener('load', () => {
 });
 </script>
 </body>
+
 </html>
