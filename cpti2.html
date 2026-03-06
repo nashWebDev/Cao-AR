@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPTI — Berea Group of Colleges</title>
+<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:   #27348B;
+  --navy-d: #1c2566;
+  --navy-l: #eef0f9;
+  --red:    #E8192C;
+  --white:  #ffffff;
+  --grey:   #f5f5f7;
+  --grey2:  #e8e9ef;
+  --border: #d8daea;
+  --text:   #1a1d2e;
+  --muted:  #6b7099;
+  --muted2: #9da3c2;
+}
+
+html, body {
+  min-height: 100%;
+  background: var(--grey);
+  color: var(--text);
+  font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--navy);
+  padding: 0 24px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.topbar-logo {
+  font-family: 'Abhaya Libre', serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #fff;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+.topbar-logo span {
+  display: block;
+  font-size: 0.55rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-top: 2px;
+}
+.topbar-badge {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+/* ── SHELL ── */
+.shell {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 36px 16px 72px;
+}
+
+/* ── INTRO ── */
+.intro-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--navy-l);
+  color: var(--navy);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 100px;
+  margin-bottom: 20px;
+}
+.intro-pill::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--navy);
+  flex-shrink: 0;
+}
+.intro-title {
+  font-family: 'Abhaya Libre', serif;
+  font-weight: 800;
+  font-size: clamp(2rem, 8vw, 3rem);
+  color: var(--navy);
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+.intro-title em {
+  font-style: normal;
+  color: var(--red);
+}
+.intro-sub {
+  font-size: 0.84rem;
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+.intro-stats {
+  display: flex;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+.stat {
+  flex: 1;
+  text-align: center;
+  padding: 14px 8px;
+  border-right: 1px solid var(--border);
+}
+.stat:last-child { border-right: none; }
+.stat-val {
+  display: block;
+  font-family: 'Abhaya Libre', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.stat-lbl {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--muted2);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── BUTTONS ── */
+.btn-navy {
+  display: block;
+  width: 100%;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 15px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.12s;
+  text-transform: uppercase;
+}
+.btn-navy:hover { background: var(--navy-d); transform: translateY(-1px); }
+.btn-navy:active { transform: none; }
+
+/* ── QUIZ ── */
+#quiz-screen { display: none; }
+
+.prog-wrap { margin-bottom: 22px; }
+.prog-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+}
+.prog-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+.prog-frac {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--muted2);
+}
+.prog-track {
+  height: 4px;
+  background: var(--grey2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.prog-fill {
+  height: 100%;
+  background: var(--navy);
+  border-radius: 99px;
+  width: 0%;
+  transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+}
+
+.q-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 26px 22px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.q-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--navy);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.38s ease;
+}
+.q-card.answered::before { transform: scaleX(1); }
+
+.q-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  display: block;
+  margin-bottom: 10px;
+}
+.q-text {
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.options { display: flex; flex-direction: column; gap: 7px; }
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--grey);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.option:hover { border-color: #8a96cc; background: var(--navy-l); }
+.option.selected { border-color: var(--navy); background: var(--navy-l); }
+.option.dimmed { opacity: 1; pointer-events: all; }
+
+.opt-dot {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.15s;
+}
+.opt-dot::after {
+  content: '';
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--navy);
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.15s, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.option.selected .opt-dot { border-color: var(--navy); }
+.option.selected .opt-dot::after { opacity: 1; transform: scale(1); }
+.opt-text {
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.4;
+}
+.option.dimmed .opt-text { color: var(--text); }
+
+.nav-row { display: flex; gap: 10px; }
+.btn-back {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 13px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-back:hover:not(:disabled) { border-color: var(--navy); color: var(--navy); }
+.btn-back:disabled { opacity: 0.28; cursor: not-allowed; }
+
+.btn-next {
+  flex: 1;
+  background: var(--navy);
+  border: none;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 13px;
+  border-radius: 8px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  opacity: 0.28;
+  pointer-events: none;
+  transition: opacity 0.18s, background 0.18s, transform 0.12s;
+  text-transform: uppercase;
+}
+.btn-next.active { opacity: 1; pointer-events: all; }
+.btn-next.active:hover { background: var(--navy-d); transform: translateY(-1px); }
+
+/* ── FORM SCREEN ── */
+#form-screen { display: none; }
+
+.form-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 24px;
+  margin-bottom: 14px;
+}
+.form-eyebrow {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  display: block;
+  margin-bottom: 8px;
+}
+.form-title {
+  font-family: 'Abhaya Libre', serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.form-sub {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 22px;
+}
+
+/* Matched faculty pills in form */
+.match-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.match-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--navy-l);
+  color: var(--navy);
+  border: 1px solid #c5caeb;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+.match-pill::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--navy);
+  flex-shrink: 0;
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.field-group { position: relative; }
+.field-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+.field-input {
+  width: 100%;
+  background: var(--grey);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 400;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  -webkit-appearance: none;
+}
+.field-input:focus { border-color: var(--navy); background: var(--white); }
+.field-input::placeholder { color: var(--muted2); }
+.field-input.error { border-color: var(--red); }
+
+.btn-submit {
+  display: block;
+  width: 100%;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 15px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.12s;
+  text-transform: uppercase;
+  position: relative;
+}
+.btn-submit:hover:not(:disabled) { background: var(--navy-d); transform: translateY(-1px); }
+.btn-submit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+.btn-submit .btn-loader {
+  display: none;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: 0 auto;
+}
+.btn-submit.loading .btn-loader { display: block; }
+.btn-submit.loading .btn-label { display: none; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.form-disclaimer {
+  font-size: 0.72rem;
+  color: var(--muted2);
+  text-align: center;
+  line-height: 1.6;
+  margin-top: 12px;
+}
+
+/* ── RESULTS ── */
+#results-screen { display: none; }
+
+.result-intro {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 26px 22px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+.result-icon {
+  width: 52px; height: 52px;
+  background: var(--navy-l);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+}
+.result-icon svg { width: 24px; height: 24px; }
+
+.result-heading {
+  font-family: 'Abhaya Libre', serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+.result-count-text {
+  font-size: 0.84rem;
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.result-count-text strong {
+  color: var(--navy);
+  font-weight: 700;
+}
+
+/* Faculty result cards */
+.faculty-section { margin-bottom: 14px; }
+.faculty-section-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
+
+.faculty-result-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: border-color 0.18s, transform 0.18s;
+}
+.faculty-result-card:hover { border-color: var(--navy); transform: translateY(-1px); }
+
+.frc-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  gap: 12px;
+  text-decoration: none;
+}
+.frc-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+.faculty-icon-wrap {
+  width: 38px; height: 38px;
+  background: var(--navy-l);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.faculty-icon-wrap svg { width: 18px; height: 18px; }
+.faculty-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+.faculty-sub {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--muted2);
+  margin-top: 2px;
+}
+.frc-arrow {
+  color: var(--navy);
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.faculty-result-card:hover .frc-arrow { opacity: 1; transform: translateX(3px); }
+
+.disclaimer {
+  background: #fffaf0;
+  border: 1px solid #edcf7a;
+  border-radius: 10px;
+  padding: 15px 18px;
+  margin-bottom: 14px;
+}
+.disclaimer-title {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a07020;
+  margin-bottom: 5px;
+}
+.disclaimer-text {
+  font-size: 0.78rem;
+  color: #7a6030;
+  line-height: 1.65;
+}
+
+.retake-wrap { text-align: center; margin-top: 8px; }
+.btn-retake {
+  background: none;
+  border: none;
+  color: var(--muted2);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 8px;
+  transition: color 0.15s;
+}
+.btn-retake:hover { color: var(--navy); }
+
+/* ── WIPE ── */
+.wipe {
+  position: fixed; inset: 0;
+  background: var(--navy);
+  transform: scaleX(0);
+  transform-origin: left;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+@media (max-width: 380px) {
+  .topbar-logo { font-size: 0.92rem; }
+  .q-card { padding: 20px 16px; }
+  .form-card { padding: 22px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="wipe" id="wipe"></div>
+
+<div class="topbar">
+  <div class="topbar-logo">
+    Berea Group of Colleges
+    <span>100% Guaranteed Employment</span>
+  </div>
+  <div class="topbar-badge">CPTI</div>
+</div>
+
+<div class="shell">
+
+  <!-- ══ INTRO ══ -->
+  <div id="intro-screen">
+    <div class="intro-pill">Free Career Assessment</div>
+    <h1 class="intro-title">Discover Your<br><em>Faculty Match</em></h1>
+    <p class="intro-sub">Not sure which field is right for you? Answer 5 short questions and we'll point you in the right direction.</p>
+    <div class="intro-stats">
+      <div class="stat"><span class="stat-val">5</span><span class="stat-lbl">Questions</span></div>
+      <div class="stat"><span class="stat-val">2<small style="font-size:1rem">m</small></span><span class="stat-lbl">Duration</span></div>
+      <div class="stat"><span class="stat-val">7</span><span class="stat-lbl">Faculties</span></div>
+    </div>
+    <button class="btn-navy" id="btn-start">Begin Assessment</button>
+  </div>
+
+  <!-- ══ QUIZ ══ -->
+  <div id="quiz-screen">
+    <div class="prog-wrap">
+      <div class="prog-meta">
+        <span class="prog-label">Progress</span>
+        <span class="prog-frac" id="prog-frac">1 of 5</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+
+    <div class="q-card" id="q-card">
+      <span class="q-label" id="q-label">Question 1 of 5</span>
+      <p class="q-text" id="q-text"></p>
+      <div class="options" id="options"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" id="btn-back" disabled>← Back</button>
+      <button class="btn-next" id="btn-next">Next →</button>
+    </div>
+  </div>
+
+  <!-- ══ FORM SCREEN ══ -->
+  <div id="form-screen">
+    <div class="form-card">
+      <span class="form-eyebrow">Almost There</span>
+      <div class="form-title">One last step</div>
+      <p class="form-sub">Tell us a bit about yourself and we'll send your results and get someone to reach out.</p>
+
+      <!-- <div id="match-pills-wrap" class="match-pills"></div> -->
+
+      <div class="form-fields">
+        <div class="field-group">
+          <label class="field-label" for="f-name">Full Name</label>
+          <input class="field-input" type="text" id="f-name" placeholder="e.g. Sipho Dlamini" autocomplete="name">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="f-email">Email Address</label>
+          <input class="field-input" type="email" id="f-email" placeholder="e.g. sipho@email.com" autocomplete="email">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="f-cell">Cell Number</label>
+          <input class="field-input" type="tel" id="f-cell" placeholder="e.g. 0821234567" autocomplete="tel">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="f-school">School / Institution</label>
+          <input class="field-input" type="text" id="f-school" placeholder="e.g. Glenwood High School">
+        </div>
+      </div>
+
+      <button class="btn-submit" id="btn-submit">
+        <span class="btn-label">View My Results →</span>
+        <span class="btn-loader"></span>
+      </button>
+      <p class="form-disclaimer">Your information is private and will never be shared with third parties.</p>
+    </div>
+  </div>
+
+  <!-- ══ RESULTS ══ -->
+  <div id="results-screen">
+
+    <div class="result-intro" id="result-intro">
+      <div class="result-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#27348B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <div class="result-heading" id="result-heading">Assessment Complete</div>
+      <p class="result-count-text" id="result-count-text"></p>
+    </div>
+
+    <div class="faculty-section">
+      <div class="faculty-section-label">Your matched faculties — click to learn more</div>
+      <div id="faculty-cards"></div>
+    </div>
+
+    <div class="disclaimer">
+      <div class="disclaimer-title">Keep Your Options Open</div>
+      <p class="disclaimer-text">This is a directional guide, not a definitive answer. Your personality is broader than any quiz can measure. Use this as a starting point and speak with our advisors for a fuller picture.</p>
+    </div>
+
+    <div class="retake-wrap">
+      <button class="btn-retake" id="btn-restart">Retake the assessment</button>
+    </div>
+
+  </div>
+
+</div><!-- /shell -->
+
+<script>
+/* ─────────────────────────────────────
+   WEBHOOK URL — replace this
+───────────────────────────────────── */
+const WEBHOOK_URL = 'https://berealeads.co.za/testSys/newLeadAssignmentTest';
+
+/* ─────────────────────────────────────
+   DATA
+───────────────────────────────────── */
+const questions = [
+  {
+    text: "How do you approach problem-solving?",
+    options: [
+      { text: "By designing or building physical or technical systems", faculty: "engineering" },
+      { text: "By leading and motivating others to reach goals", faculty: "management" },
+      { text: "By analysing the situation and applying logical solutions", faculty: "info" },
+      { text: "By considering the well-being and understanding of others", faculty: "edu" },
+      { text: "By ensuring everyone has a great experience", faculty: "hospitality" },
+      { text: "By thinking creatively and coming up with unique ideas", faculty: "media" },
+      { text: "By solving complex logistical challenges", faculty: "logistics" }
+    ]
+  },
+  {
+    text: "What type of activities do you enjoy the most?",
+    options: [
+      { text: "Building or designing structures and systems", faculty: "engineering" },
+      { text: "Managing finances, marketing, or leading a business", faculty: "management" },
+      { text: "Developing software or working with computers", faculty: "info" },
+      { text: "Teaching or guiding others", faculty: "edu" },
+      { text: "Planning events or working in the travel industry", faculty: "hospitality" },
+      { text: "Writing, creating digital content, or storytelling", faculty: "media" },
+      { text: "Organising transportation routes or supply chains", faculty: "logistics" }
+    ]
+  },
+  {
+    text: "What subjects did you enjoy the most in school?",
+    options: [
+      { text: "Mathematics, physics, or technical subjects", faculty: "engineering" },
+      { text: "Business studies or commerce", faculty: "management" },
+      { text: "Computer science or technology-related subjects", faculty: "info" },
+      { text: "Social sciences, law, or education", faculty: "edu" },
+      { text: "Tourism, hospitality, or event planning", faculty: "hospitality" },
+      { text: "Art, media studies, or creative writing", faculty: "media" },
+      { text: "Geography, math, or economics", faculty: "logistics" }
+    ]
+  },
+  {
+    text: "What's your ideal work environment?",
+    options: [
+      { text: "Construction sites or engineering firms", faculty: "engineering" },
+      { text: "Corporations, startups, or business consultancies", faculty: "management" },
+      { text: "Tech companies or IT departments", faculty: "info" },
+      { text: "Schools, universities, or law firms", faculty: "edu" },
+      { text: "Hotels, resorts, or event spaces", faculty: "hospitality" },
+      { text: "Media agencies, studios, or creative offices", faculty: "media" },
+      { text: "Transport hubs, logistics companies, or warehouses", faculty: "logistics" }
+    ]
+  },
+  {
+    text: "What motivates you the most in a career?",
+    options: [
+      { text: "Designing and building impactful projects", faculty: "engineering" },
+      { text: "Driving business success and growth", faculty: "management" },
+      { text: "Developing cutting-edge technology", faculty: "info" },
+      { text: "Making a difference in others' lives", faculty: "edu" },
+      { text: "Helping others experience great service", faculty: "hospitality" },
+      { text: "Creating new and innovative ideas", faculty: "media" },
+      { text: "Solving complex logistical challenges", faculty: "logistics" }
+    ]
+  }
+];
+
+const faculties = {
+  engineering: {
+    label: "Engineering",
+    sub: "Civil, Mechanical, Electrical & more",
+    link: "https://bereagroup.co.za/eregfrom/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#27348B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`
+  },
+  management: {
+    label: "Management & Commerce",
+    sub: "Business, Finance, HR & more",
+    link: "https://bereagroup.co.za/elementor-12013/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#27348B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`
+  },
+  info: {
+    label: "Information Technology",
+    sub: "Software, IT, AI & more",
+    link: "https://bereagroup.co.za/elementor-12037/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#27348B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`
+  },
+  edu: {
+    label: "Education & Legal",
+    sub: "Teaching, Law, Psychology & more",
+    link: "https://bereagroup.co.za/elregform/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#27348B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`
+  },
+  hospitality: {
+    label: "Hospitality & Tourism",
+    sub: "Hotels, Events, Travel & more",
+    link: "https://bereagroup.co.za/hsresultsform/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#27348B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`
+  },
+  media: {
+    label: "Media & Creative Studies",
+    sub: "Design, Journalism, Marketing & more",
+    link: "https://bereagroup.co.za/mcsresultsform/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#27348B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`
+  },
+  logistics: {
+    label: "Transport & Logistics",
+    sub: "Supply Chain, Maritime & more",
+    link: "https://bereagroup.co.za/elementor-12090/",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#27348B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`
+  }
+};
+
+const facultyOrder = ["engineering","management","info","edu","hospitality","media","logistics"];
+
+/* ─────────────────────────────────────
+   STATE
+───────────────────────────────────── */
+let current = 0;
+let answers = [];
+let quizScores = {};
+let quizWinners = [];
+
+/* ─────────────────────────────────────
+   WIPE TRANSITION
+───────────────────────────────────── */
+function doWipe(cb) {
+  const w = document.getElementById('wipe');
+  gsap.timeline()
+    .set(w, { scaleX: 0, transformOrigin: 'left' })
+    .to(w, { scaleX: 1, duration: 0.22, ease: "power2.in" })
+    .call(cb)
+    .to(w, { scaleX: 0, duration: 0.26, ease: "power2.out", transformOrigin: 'right', delay: 0.04 });
+}
+
+/* ─────────────────────────────────────
+   QUIZ LOGIC
+───────────────────────────────────── */
+function updateProgress() {
+  const pct = ((current + 1) / questions.length) * 100;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-frac').textContent = `${current + 1} of ${questions.length}`;
+}
+
+function updateNav() {
+  const nx = document.getElementById('btn-next');
+  const bk = document.getElementById('btn-back');
+  bk.disabled = current === 0;
+  nx.textContent = current === questions.length - 1 ? 'See Results →' : 'Next →';
+  answers[current] !== undefined ? nx.classList.add('active') : nx.classList.remove('active');
+}
+
+function buildQuestion(idx) {
+  const q = questions[idx];
+  document.getElementById('q-label').textContent = `Question ${idx+1} of ${questions.length}`;
+  document.getElementById('q-text').textContent = q.text;
+  const optsEl = document.getElementById('options');
+  optsEl.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'option' + (answers[idx] === i ? ' selected' : '');
+    div.innerHTML = `<div class="opt-dot"></div><span class="opt-text">${opt.text}</span>`;
+    div.addEventListener('click', () => selectOption(idx, i));
+    optsEl.appendChild(div);
+    gsap.from(div, { opacity: 0, y: 6, duration: 0.2, delay: 0.04 + i * 0.03, ease: "power2.out" });
+  });
+  if (answers[idx] !== undefined) { /* selection already shown via .selected class */ }
+  document.getElementById('q-card').classList.toggle('answered', answers[idx] !== undefined);
+  updateProgress();
+  updateNav();
+}
+
+function renderQuestion(idx, dir) {
+  const card = document.getElementById('q-card');
+  const ox = dir === 1 ? -24 : 24;
+  gsap.to(card, { opacity: 0, x: ox, duration: 0.16, ease: "power2.in",
+    onComplete: () => {
+      buildQuestion(idx);
+      gsap.fromTo(card, { opacity: 0, x: -ox }, { opacity: 1, x: 0, duration: 0.22, ease: "power2.out" });
+    }
+  });
+}
+
+function selectOption(qIdx, optIdx) {
+  answers[qIdx] = optIdx;
+  const all = document.querySelectorAll('.option');
+  all.forEach(o => o.classList.remove('selected'));
+  all[optIdx].classList.add('selected');
+  gsap.fromTo(all[optIdx], { scale: 0.98 }, { scale: 1, duration: 0.2, ease: "back.out(2.5)" });
+  document.getElementById('q-card').classList.add('answered');
+  updateNav();
+}
+
+function applyDim(sel) {
+  document.querySelectorAll('.option').forEach((o, i) => {
+    i !== sel ? o.classList.add('dimmed') : o.classList.remove('dimmed');
+  });
+}
+
+/* ─────────────────────────────────────
+   SCORE CALC
+───────────────────────────────────── */
+function calcScores() {
+  const scores = {};
+  facultyOrder.forEach(f => scores[f] = 0);
+  answers.forEach((optIdx, qIdx) => {
+    scores[questions[qIdx].options[optIdx].faculty]++;
+  });
+  return scores;
+}
+
+/* ─────────────────────────────────────
+   SHOW FORM (after quiz complete)
+───────────────────────────────────── */
+function showForm() {
+  quizScores = calcScores();
+  const maxScore = Math.max(...Object.values(quizScores));
+  quizWinners = facultyOrder.filter(f => quizScores[f] === maxScore);
+
+  doWipe(() => {
+    document.getElementById('quiz-screen').style.display = 'none';
+    const fs = document.getElementById('form-screen');
+    fs.style.display = 'block';
+
+    // Populate matched faculty pills
+    //const pillsWrap = document.getElementById('match-pills-wrap');
+    // pillsWrap.innerHTML = '';
+    // quizWinners.forEach(fKey => {
+    //   const pill = document.createElement('div');
+    //   pill.className = 'match-pill';
+    //   pill.textContent = faculties[fKey].label;
+    //   pillsWrap.appendChild(pill);
+    //});
+
+    gsap.from(fs, { opacity: 0, y: 10, duration: 0.3 });
+  });
+}
+
+/* ─────────────────────────────────────
+   WEBHOOK SUBMIT
+───────────────────────────────────── */
+async function submitToWebhook(formData) {
+  const matchedFacultiesString = quizWinners.map(f => faculties[f].label).join(', ');
+
+  const payload = {
+    timestamp: new Date().toISOString(),
+    // Contact details
+    name: formData.name,
+    email: formData.email,
+    cell: formData.cell,
+    school: formData.school,
+    // Quiz results
+    matched_faculties: matchedFacultiesString,
+    matched_faculties_count: quizWinners.length,
+    // // Full score breakdown
+    // scores: Object.fromEntries(facultyOrder.map(f => [faculties[f].label, quizScores[f]])),
+    // // Detailed answers
+    // answers: answers.map((optIdx, qIdx) => ({
+    //   question: questions[qIdx].text,
+    //   answer: questions[qIdx].options[optIdx].text,
+    //   faculty_mapped: faculties[questions[qIdx].options[optIdx].faculty].label
+    // }))
+  };
+
+  console.log('Webhook payload:', JSON.stringify(payload, null, 2));
+
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    await modifyPdf(formData)
+  } catch (err) {
+    // Don't block user flow on webhook failure — just log
+    console.warn('Webhook failed:', err);
+  }
+  
+}
+
+// pdf viewer
+
+async function modifyPdf(formdata) {
+    const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
+
+    const existingPdfBytes = await fetch('./formtest.pdf').then(res => res.arrayBuffer())
+    const pdfDoc = await PDFDocument.load(existingPdfBytes)
+
+    // Log all fields so you know what's in the PDF
+    const form = pdfDoc.getForm()
+    const fields = form.getFields()
+    
+    console.log("Fields found:", fields.length)
+    fields.forEach(field => {
+        console.log(field.constructor.name, '—', field.getName())
+    })
+
+    form.getTextField('{{name}}').setText(formdata.name)
+form.getTextField('Text2').setText(formdata.email)
+
+form.flatten()  // bakes it all in as static text
+
+const pdfBytes = await pdfDoc.save()
+const blob = new Blob([pdfBytes], { type: 'application/pdf' })
+const link = document.createElement('a')
+link.href = URL.createObjectURL(blob)
+link.download = 'CPTI.pdf'
+link.click()
+}
+
+
+/* ─────────────────────────────────────
+   SHOW RESULTS
+───────────────────────────────────── */
+function showResults() {
+  doWipe(() => {
+    document.getElementById('form-screen').style.display = 'none';
+    const rs = document.getElementById('results-screen');
+    rs.style.display = 'block';
+
+    if (quizWinners.length === 1) {
+      document.getElementById('result-heading').textContent = 'We found your match!';
+      document.getElementById('result-count-text').innerHTML =
+        `Based on your answers, <strong>1 faculty</strong> stood out. Click below to find out more and register your interest.`;
+    } else {
+      document.getElementById('result-heading').textContent = `${quizWinners.length} faculties matched!`;
+      document.getElementById('result-count-text').innerHTML =
+        `Based on your answers, <strong>${quizWinners.length} faculties</strong> seem like a great fit. Click one below to learn more and register your interest.`;
+    }
+
+    const container = document.getElementById('faculty-cards');
+    container.innerHTML = '';
+
+    quizWinners.forEach((fKey, idx) => {
+      const f = faculties[fKey];
+      const card = document.createElement('div');
+      card.className = 'faculty-result-card';
+      card.innerHTML = `
+        <a class="frc-inner" href="${f.link}" target="_blank" rel="noopener">
+          <div class="frc-left">
+            <div class="faculty-icon-wrap">${f.icon}</div>
+            <div>
+              <div class="faculty-name">${f.label}</div>
+              <div class="faculty-sub">${f.sub}</div>
+            </div>
+          </div>
+          <svg class="frc-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      `;
+      container.appendChild(card);
+      gsap.from(card, { opacity: 0, y: 10, duration: 0.3, delay: 0.15 + idx * 0.07, ease: "power2.out" });
+    });
+
+    gsap.from('#result-intro',         { opacity: 0, y: 12, duration: 0.35, delay: 0.08 });
+    gsap.from('.faculty-section-label',{ opacity: 0, duration: 0.3, delay: 0.2 });
+    gsap.from('.disclaimer',           { opacity: 0, y: 8,  duration: 0.3, delay: 0.3 + quizWinners.length * 0.07 });
+    gsap.from('.retake-wrap',          { opacity: 0, duration: 0.3, delay: 0.4 + quizWinners.length * 0.07 });
+  });
+}
+
+/* ─────────────────────────────────────
+   LISTENERS
+───────────────────────────────────── */
+document.getElementById('btn-start').addEventListener('click', () => {
+  doWipe(() => {
+    document.getElementById('intro-screen').style.display = 'none';
+    const qs = document.getElementById('quiz-screen');
+    qs.style.display = 'block';
+    buildQuestion(0);
+    gsap.from(qs, { opacity: 0, duration: 0.28 });
+  });
+});
+
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (answers[current] === undefined) return;
+  if (current === questions.length - 1) { showForm(); return; }
+  current++;
+  renderQuestion(current, 1);
+});
+
+document.getElementById('btn-back').addEventListener('click', () => {
+  if (current === 0) return;
+  current--;
+  renderQuestion(current, -1);
+});
+
+document.getElementById('btn-submit').addEventListener('click', async () => {
+  const name   = document.getElementById('f-name').value.trim();
+  const email  = document.getElementById('f-email').value.trim();
+  const cell   = document.getElementById('f-cell').value.trim();
+  const school = document.getElementById('f-school').value.trim();
+
+  // Validate — highlight empties
+  let valid = true;
+  [['f-name', name], ['f-email', email], ['f-cell', cell], ['f-school', school]].forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (!val) { el.classList.add('error'); valid = false; }
+    else el.classList.remove('error');
+  });
+
+  if (!valid) {
+    const btn = document.getElementById('btn-submit');
+    gsap.fromTo(btn, { x: -5 }, { x: 0, duration: 0.5, ease: "elastic.out(1, 0.3)",
+      keyframes: [{ x:-5 },{ x:5 },{ x:-4 },{ x:3 },{ x:0 }] });
+    return;
+  }
+
+  // Loading state
+  const btn = document.getElementById('btn-submit');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  await submitToWebhook({ name, email, cell, school });
+
+  showResults();
+});
+
+// Remove error state on input
+['f-name','f-email','f-cell','f-school'].forEach(id => {
+  document.getElementById(id).addEventListener('input', function() {
+    this.classList.remove('error');
+  });
+});
+
+document.getElementById('btn-restart').addEventListener('click', () => {
+  answers = []; current = 0; quizScores = {}; quizWinners = [];
+  doWipe(() => {
+    document.getElementById('results-screen').style.display = 'none';
+    document.getElementById('intro-screen').style.display = 'block';
+    gsap.from('#intro-screen', { opacity: 0, duration: 0.28 });
+  });
+});
+
+/* Intro entrance */
+window.addEventListener('load', () => {
+  gsap.from('.intro-pill',  { opacity: 0, y: -8, duration: 0.35, delay: 0.1 });
+  gsap.from('.intro-title', { opacity: 0, y: 14, duration: 0.45, delay: 0.2, ease: "power3.out" });
+  gsap.from('.intro-sub',   { opacity: 0, y: 10, duration: 0.35, delay: 0.32 });
+  gsap.from('.intro-stats', { opacity: 0, y: 8,  duration: 0.32, delay: 0.42 });
+  gsap.from('.btn-navy',    { opacity: 0, y: 6,  duration: 0.3,  delay: 0.52 });
+});
+</script>
+</body>
+</html>
